@@ -1,5 +1,5 @@
 # UM Account File Manager
-Extension to Ultimate Member for Management of User Account Images and Files.
+Extension to Ultimate Member for Management of User Account Images and Files from the backend.
 
 ## UM Settings
 None
