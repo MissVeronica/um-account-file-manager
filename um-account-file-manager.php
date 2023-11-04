@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:     Ultimate Member - Account File Manager
- * Description:     Extension to Ultimate Member for Management of User Account Images and Files.
- * Version:         1.0.0
+ * Description:     Extension to Ultimate Member for Management of User Account Images and Files from the backend.
+ * Version:         1.1.0
  * Requires PHP:    7.4
  * Author:          Miss Veronica
  * License:         GPL v2 or later
@@ -92,10 +92,10 @@ class UM_Account_File_Manager {
 
     public function um_admin_user_row_actions_user_uploaded_files( $actions, $user_id ) {
 
-        $actions['view_info_update'] = '<a href="javascript:void(0);" data-modal="UM_user_uploaded_files" 
-                                        data-modal-size="larger" data-dynamic-content="user_uploaded_files" 
-                                        data-arg1="' . esc_attr( $user_id ) . '" data-arg2="user_uploaded_files">' .
-                                        __( 'User Files', 'ultimate-member' ) . '</a>';
+        $actions['view_account_files'] = '<a href="javascript:void(0);" data-modal="UM_user_uploaded_files" 
+                                          data-modal-size="larger" data-dynamic-content="user_uploaded_files" 
+                                          data-arg1="' . esc_attr( $user_id ) . '" data-arg2="user_uploaded_files">' .
+                                          __( 'User Files', 'ultimate-member' ) . '</a>';
         return $actions;
     }
 
