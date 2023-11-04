@@ -19,7 +19,7 @@ None
 4. https://imgur.com/a/IbgvVYF
 
 ## Updates 
-1. Version 1.1.0 Support for "User Files" modal in "UM Profile Content Moderation" plugin.
+1. Version 1.1.0 Support for "User Files" modal in <a href="https://github.com/MissVeronica/um-profile-content-moderation">UM Profile Content Moderation</a> plugin.
 
 ## Installation
 1. Install by downloading the plugin ZIP file and install as a new Plugin, which you upload in WordPress -> Plugins -> Add New -> Upload Plugin.
