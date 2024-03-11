@@ -2,7 +2,7 @@
 /**
  * Plugin Name:     Ultimate Member - Account File Manager
  * Description:     Extension to Ultimate Member for Management of User Account Images and Files from the backend.
- * Version:         1.1.0
+ * Version:         1.1.1
  * Requires PHP:    7.4
  * Author:          Miss Veronica
  * License:         GPL v2 or later
@@ -131,7 +131,7 @@ class UM_Account_File_Manager {
 
     public function load_toplevel_page_remove_detached_files() {
 
-        add_meta_box( 'um-metaboxes-sidebox-30',
+        add_meta_box( 'um-metaboxes-sidebox-3',
                        __( 'Detached User Account Images and Files', 'ultimate-member' ),
                        array( $this, 'toplevel_page_remove_detached_files' ), 
                       'toplevel_page_ultimatemember', 'side', 'core' );
