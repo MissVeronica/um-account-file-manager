@@ -2,7 +2,7 @@
 /**
  * Plugin Name:     Ultimate Member - Account File Manager
  * Description:     Extension to Ultimate Member for Management of User Account Images and Files from the backend.
- * Version:         1.1.1
+ * Version:         1.1.2
  * Requires PHP:    7.4
  * Author:          Miss Veronica
  * License:         GPL v2 or later
@@ -10,7 +10,7 @@
  * Author URI:      https://github.com/MissVeronica
  * Text Domain:     ultimate-member
  * Domain Path:     /languages
- * UM version:      2.7.0
+ * UM version:      2.8.5
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -131,7 +131,7 @@ class UM_Account_File_Manager {
 
     public function load_toplevel_page_remove_detached_files() {
 
-        add_meta_box( 'um-metaboxes-sidebox-3',
+        add_meta_box( 'um-metaboxes-sidebox-remove-detached-files',
                        __( 'Detached User Account Images and Files', 'ultimate-member' ),
                        array( $this, 'toplevel_page_remove_detached_files' ), 
                       'toplevel_page_ultimatemember', 'side', 'core' );
@@ -399,7 +399,7 @@ class UM_Account_File_Manager {
             <style>
                 .modal-img-show{
                         transition: transform .2s;
-                        height:<?php echo $this->thumbnail_height; ?>;
+                        height:<?php echo esc_attr( $this->thumbnail_height ); ?>;
                         border-radius: 3px;
                         justify-content: center;
                         align-items: center;
@@ -407,7 +407,7 @@ class UM_Account_File_Manager {
                         margin:0 auto;
                     }
                 .modal-img-show:hover{
-                        transform:scale(<?php echo $this->thumbnail_scale; ?>);
+                        transform:scale(<?php echo esc_attr( $this->thumbnail_scale ); ?>);
                     }
             </style>
 
@@ -420,7 +420,7 @@ class UM_Account_File_Manager {
                         $user_link = '<a href="' . esc_url( um_user_profile_url( $key )) . '" target="_blank">' . esc_attr( $user->user_login ) . '</a>';
                     }
 
-                    foreach( $files as $file ) {   
+                    foreach( $files as $file ) {
 
                         $current_file = $this->upload_basedir . $key . DIRECTORY_SEPARATOR . $file;
                         if ( $type == 'trash' ) {
@@ -580,7 +580,7 @@ class UM_Account_File_Manager {
                                 $this->detached_counter++;
                             }
                         }
-                    } 
+                    }
                 }
             }
 
@@ -708,7 +708,7 @@ class UM_Account_File_Manager {
                                     if ( ! in_array( $file_name, $this->user_meta_files[$user_id] )) {
                                         $detached_files[$user_id][] = $this->add_detached_file( $directory, $file );
                                     }
-                                    continue; 
+                                    continue;
                                 }
 
                                 $detached_files[$user_id][] = $this->add_detached_file( $directory, $file );
