@@ -2,7 +2,7 @@
 /**
  * Plugin Name:     Ultimate Member - Account File Manager
  * Description:     Extension to Ultimate Member for Management of User Account Images and Files from the backend.
- * Version:         1.1.2
+ * Version:         1.1.3
  * Requires PHP:    7.4
  * Author:          Miss Veronica
  * License:         GPL v2 or later
@@ -10,7 +10,7 @@
  * Author URI:      https://github.com/MissVeronica
  * Text Domain:     ultimate-member
  * Domain Path:     /languages
- * UM version:      2.8.5
+ * UM version:      2.8.6
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -175,6 +175,8 @@ class UM_Account_File_Manager {
 
     public function toplevel_page_remove_detached_files() {
 
+        ?>
+        <div><?php
         if ( $this->button_type == 'search' ) { ?>
 
             <div><?php _e( 'Search results', 'ultimate-member' ); ?></div>
@@ -254,7 +256,8 @@ class UM_Account_File_Manager {
 <?php       } 
         } ?>
             <div>
-<?php           _e( 'Run this task from time to time to keep your User Account upload folders clean from detached Files and multiple Image formats',  'ultimate-member' ); ?></div>
+<?php           _e( 'Run this task from time to time to keep your User Account upload folders clean from detached Files and multiple Image formats',  'ultimate-member' ); ?>
+            </div>
 <?php           $url_search_detached_files = add_query_arg( array(  'um_adm_action' => 'search_detached_files',
                                                                 '_wpnonce'      => wp_create_nonce( 'search_detached_files' ),
                                                             )); ?>
@@ -272,7 +275,7 @@ class UM_Account_File_Manager {
                         }
                     } ?>
                 </p>
-            </div>
+        </div>
 <?php
 
     }
