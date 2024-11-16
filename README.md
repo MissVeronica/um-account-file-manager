@@ -23,6 +23,7 @@ None
 2. Version 1.1.1 Dashboard column 3
 3. Version 1.1.2 Code improvements
 4. Version 1.1.3 Code improvements UM Dashboard modal
+5. Version 1.2.0 Update for WP 6.7.0 and UM 2.9.1
 
 ## Installation
 1. Install by downloading the plugin ZIP file and install as a new Plugin, which you upload in WordPress -> Plugins -> Add New -> Upload Plugin.
