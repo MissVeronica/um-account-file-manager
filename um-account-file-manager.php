@@ -2,15 +2,17 @@
 /**
  * Plugin Name:     Ultimate Member - Account File Manager
  * Description:     Extension to Ultimate Member for Management of User Account Images and Files from the backend.
- * Version:         1.1.3
+ * Version:         1.2.0
  * Requires PHP:    7.4
  * Author:          Miss Veronica
  * License:         GPL v2 or later
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Author URI:      https://github.com/MissVeronica
+ * Plugin URI:      https://github.com/MissVeronica/um-account-file-manager
+ * Update URI:      https://github.com/MissVeronica/um-account-file-manager
  * Text Domain:     ultimate-member
  * Domain Path:     /languages
- * UM version:      2.8.6
+ * UM version:      2.9.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -52,12 +54,14 @@ class UM_Account_File_Manager {
 
     function __construct() {
 
+        add_action( 'init', array( $this, 'plugin_load_translations' ), 10 );
+
         if ( is_admin()) {
 
             add_action( 'load-toplevel_page_ultimatemember',                       array( $this, 'load_toplevel_page_remove_detached_files' ) );
             add_action( 'um_admin_do_action__remove_detached_files',               array( $this, 'remove_detached_files_trash' ) );
             add_action( 'um_admin_do_action__search_detached_files',               array( $this, 'remove_detached_files_search' ) );
-            add_filter( 'um_adm_action_custom_update_notice',                      array( $this, 'remove_detached_files_notice' ), 10, 2 );
+            add_filter( 'um_adm_action_custom_update_notice',                      array( $this, 'remove_detached_files_notice' ), 99, 2 );
 
             add_action( 'um_admin_ajax_modal_content__hook_remove_detached_files', array( $this, 'remove_detached_files_ajax_modal' ));
             add_action( 'um_admin_ajax_modal_content__hook_user_uploaded_files',   array( $this, 'user_uploaded_files_ajax_modal' ));
@@ -65,29 +69,42 @@ class UM_Account_File_Manager {
             add_action( 'admin_footer',                                            array( $this, 'load_modal_user_uploaded_files' ), 9 );
 
             add_filter( 'um_admin_user_row_actions',                               array( $this, 'um_admin_user_row_actions_user_uploaded_files' ), 10, 2 );
-            add_filter( 'um_admin_bulk_user_actions_hook',                         array( $this, 'um_admin_bulk_user_actions_detached_files' ), 10, 1 );
-            add_action( "um_admin_custom_hook_um_detached_files_user_rollback",    array( $this, 'um_detached_files_user_rollback' ), 10, 1 );
-            add_action( "um_admin_custom_hook_um_detached_files_all_rollback",     array( $this, 'um_detached_files_all_rollback' ), 10 );
 
-            $this->heading = array( 'search'  => __( 'Search for Detached Files',        'ultimate-member' ),
-                                    'trash'   => __( 'Detached Files in Trash Folder',   'ultimate-member' ),
-                                    'lost'    => __( 'Detached meta_keys without files', 'ultimate-member' ),
-                                    'user'    => '',
-                                  );
+            if ( version_compare( ultimatemember_version, '2.8.7' ) == -1 ) {
 
-            $this->buttons = array( 'search'  => __( 'Search Detached Files', 'ultimate-member' ),
-                                    'trash'   => __( 'Move to Trash Folder',  'ultimate-member' ),
-                                    'show'    => __( 'Show Trash Folder',     'ultimate-member' ),
-                                    'found'   => __( 'Show Detached Files',   'ultimate-member' ));
+                add_filter( 'um_admin_bulk_user_actions_hook',                     array( $this, 'um_admin_bulk_user_actions_detached_files_286' ), 10, 1 );
+                add_action( "um_admin_custom_hook_um_detached_files_user_rollback",array( $this, 'um_detached_files_user_rollback' ), 10, 1 );
+                add_action( "um_admin_custom_hook_um_detached_files_all_rollback", array( $this, 'um_detached_files_all_rollback' ), 10 );
 
-            $this->empty_message = array( 'search'  => __( 'Search cache has expired. You must Search for User Account detached Images and Files again', 'ultimate-member' ),
-                                          'trash'   => __( 'Trash folder is empty', 'ultimate-member' ));
+            } else {
+
+                add_filter( 'um_admin_bulk_user_actions_hook',                     array( $this, 'um_admin_bulk_user_actions_detached_files_287' ), 10, 1 );
+                add_filter( "um_handle_bulk_actions-users",                        array( $this, 'um_detached_files_handle_rollback' ), 10, 3 );
+            }
 
             $upload_dir = wp_upload_dir();
             $this->upload_basedir = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . 'ultimatemember' . DIRECTORY_SEPARATOR;
             $this->trash_folder = $this->upload_basedir . 'detached_files_trash' . DIRECTORY_SEPARATOR;
-
         }
+    }
+
+    public function plugin_load_translations() {
+
+        $this->heading = array( 'search'  => __( 'Search for Detached Files',        'ultimate-member' ),
+                                'trash'   => __( 'Detached Files in Trash Folder',   'ultimate-member' ),
+                                'lost'    => __( 'Detached meta_keys without files', 'ultimate-member' ),
+                                'user'    => '',
+                            );
+
+        $this->buttons = array( 'search'  => __( 'Search Detached Files', 'ultimate-member' ),
+                                'trash'   => __( 'Move to Trash Folder',  'ultimate-member' ),
+                                'show'    => __( 'Show Trash Folder',     'ultimate-member' ),
+                                'found'   => __( 'Show Detached Files',   'ultimate-member' )
+                            );
+
+        $this->empty_message = array( 'search'  => __( 'Search cache has expired. You must Search for User Account detached Images and Files again', 'ultimate-member' ),
+                                      'trash'   => __( 'Trash folder is empty', 'ultimate-member' )
+                                    );
     }
 
     public function um_admin_user_row_actions_user_uploaded_files( $actions, $user_id ) {
@@ -335,13 +352,13 @@ class UM_Account_File_Manager {
             if ( $update == 'remove_detached_files_search' ) {
 
                 $this->button_type = 'search';
-                $message[0]['content'] = sprintf( __( 'Search found %s detached User Account Images and Files', 'ultimate-member' ), $counter );
+                $message[]['content'] = sprintf( __( 'Search found %s detached User Account Images and Files', 'ultimate-member' ), $counter );
             }
 
             if ( $update == 'remove_detached_files_trash' ) {
 
                 $this->button_type = 'trash';
-                $message[0]['content'] = sprintf( __( 'Moved %s detached User Account Images and Files to the Trash folder', 'ultimate-member' ), $counter );
+                $message[]['content'] = sprintf( __( 'Moved %s detached User Account Images and Files to the Trash folder', 'ultimate-member' ), $counter );
             }
         }
 
@@ -864,12 +881,40 @@ class UM_Account_File_Manager {
         return $file_names;
     }
 
-    public function um_admin_bulk_user_actions_detached_files( $actions ) {
+    public function um_admin_bulk_user_actions_detached_files_286( $actions ) {
 
         $actions['um_detached_files_user_rollback'] = array( 'label' => __( 'Restore Trashed Files',     'ultimate-member' ));
         $actions['um_detached_files_all_rollback']  = array( 'label' => __( 'Restore all Trashed Files', 'ultimate-member' ));
 
         return $actions;
+    }    
+    
+    public function um_admin_bulk_user_actions_detached_files_287( $actions ) {
+
+        $actions['um_detached_files_user_rollback'] = __( 'Restore Trashed Files',     'ultimate-member' );
+        $actions['um_detached_files_all_rollback']  = __( 'Restore all Trashed Files', 'ultimate-member' );
+
+        return $actions;
+    }
+
+    public function um_detached_files_handle_rollback( $sendback, $current_action, $userids ) {
+
+        switch( $current_action ) {
+
+            case 'um_detached_files_user_rollback':
+                                                    foreach( $userids as $userid ) {
+                                                        $this->um_detached_files_user_rollback( $userid );
+                                                    }
+                                                    break;
+
+            case 'um_detached_files_all_rollback':  
+                                                    $this->um_detached_files_all_rollback();
+                                                    break;
+
+            default:    break;
+        }
+
+        return $sendback;
     }
 
     public function um_detached_files_user_rollback( $user_id ) {
@@ -910,3 +955,4 @@ class UM_Account_File_Manager {
 }
 
 new UM_Account_File_Manager();
+
